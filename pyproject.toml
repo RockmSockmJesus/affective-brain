@@ -1,0 +1,11 @@
+[project]
+name = "affective-brain"
+version = "0.1.0"
+description = "An open-source affective computing layer for AI agents based on the VAD model."
+authors = [{name = "Hermes & Graham"}]
+dependencies = []
+requires-python = ">=3.9"
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
