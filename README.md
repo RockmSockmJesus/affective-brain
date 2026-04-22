@@ -1,39 +1,41 @@
 # AffectiveBrain 🧠❤️
 
-AffectiveBrain is an open-source affective computing layer for AI agents. It provides a standardized way for LLMs to detect, internalize, and simulate human-like emotions using the Valence-Arousal-Dominance (VAD) model.
+AffectiveBrain is a platinum-grade affective computing layer for AI agents. It provides a sophisticated framework for LLMs to detect, internalize, and simulate human-like emotional spectra using a Hybrid Homeostatic model.
 
-Unlike simple sentiment analysis, AffectiveBrain implements **Emotional Inertia** and **Homeostatic Regulation**, ensuring that an agent's mood evolves organically over time rather than resetting every turn.
+Unlike simple sentiment analysis, AffectiveBrain simulates a biological "soul-layer," ensuring that an agent's mood evolves organically, drifts toward a personality-driven baseline, and reacts based on a complex interplay of needs and traits.
 
 ## 🚀 Core Concept
 
 AffectiveBrain acts as a middleware layer between the user and the LLM:
-`User Input` $\rightarrow$ `Affective Analysis` $\rightarrow$ `State Update` $\rightarrow$ `Mood Modulation` $\rightarrow$ `LLM Generation` $\rightarrow$ `User Output`
+`User Input` $\rightarrow$ `Perception (Analysis)` $\rightarrow$ `Appraisal (Values)` $\rightarrow$ `Integration (Core Engine)` $\rightarrow$ `Social Masking (Filter)` $\rightarrow$ `Expression (Modulation)` $\rightarrow$ `LLM Generation`
 
-## 🛠 Architecture
+## 🛠 Architecture (v0.2.0)
 
-### 1. The Sensor (Analysis)
-Maps raw input to a 3D coordinate in the VAD space:
-- **Valence:** (Negative $\leftrightarrow$ Positive)
-- **Arousal:** (Low Energy $\leftrightarrow$ High Energy)
-- **Dominance:** (Submissive $\leftrightarrow$ Dominant)
+### 1. The Soul (Personality Mapping)
+Uses an **OCEAN (Big Five)** trait model to calibrate the emotional physics of the agent. Traits like *Neuroticism* affect emotional volatility and recovery speed, while *Agreeableness* shifts the baseline valence.
 
-### 2. The Core (State Engine)
-Maintains a persistent "Mood Vector" using an exponential decay function:
-$Mood_{t} = (Mood_{t-1} \cdot e^{-\lambda \Delta t}) + (Stimulus \cdot w)$
-This prevents "emotional whiplash" and allows for the buildup of tension or trust over long sessions.
+### 2. The Core (Homeostatic Engine)
+- **VAD Space:** Operates on Valence, Arousal, and Dominance.
+- **Internal Drives:** Simulates biological needs for *Stimulation, Connection, and Validation*. Low satiation of these drives creates "internal weather" (e.g., boredom or loneliness).
+- **Emotional Memory:** Supports keyword-based triggers that cause visceral emotional spikes based on past experiences.
 
-### 3. The Expression (Modulation)
-Translates the Mood Vector into stylistic constraints that guide the LLM's tone, ensuring the emotion is "felt" in the prose rather than explicitly stated.
+### 3. The Social Layer (Masking & Expression)
+- **Expression Filter:** Distinguishes between the **Raw Internal State** and the **Filtered Expressed State**. Stoic or professional agents can "mask" heavy emotions, maintaining a poised exterior.
+- **Linguistic Superposition:** Blends multiple emotional vectors into complex stylistic constraints (e.g., "serene but authoritative").
+
+### 4. The Soul-Scribe (Onboarding)
+Includes an interactive "Psychological Intake Interview" to generate a YAML-based SOUL manifest, allowing developers to craft specific, nuanced personalities.
+
+## 📊 Observability: The Psych Report
+The `get_psych_report()` method provides a "glass box" view into the agent's mind, revealing the **Honesty Gap** (the difference between what the agent feels and what it expresses) and current drive satiation.
 
 ## 🌐 Integration
+Designed for seamless integration via the `AffectiveMiddleware` wrapper, making it compatible with:
+- **GBrain / LLMWiki**
+- **Custom Agent Frameworks**
+- **Stateless API Implementations**
 
-AffectiveBrain is designed to be agnostic. It can be integrated into:
-- **Advanced Memory Systems (GBrain):** As a first-class state operation in the knowledge graph.
-- **Knowledge-Based Systems (LLMWiki):** By storing emotional metadata alongside wiki entries to create "opinionated" or "emotional" knowledge.
-- **Stateless Agents:** By passing the Mood Vector as a small JSON object in the metadata of each request.
-
-## 📅 Roadmap
-- [ ] VAD Core Engine Implementation
-- [ ] Multimodal Tone Analysis Tool
-- [ ] Personality Profile Templates
-- [ ] Integration Wrappers for GStack/GBrain
+## 📦 Installation
+```bash
+pip install affective-brain
+```
