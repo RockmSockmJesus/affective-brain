@@ -13,23 +13,23 @@ class AffectiveBrain:
     def __init__(self, soul_config=None, storage_dir="data"):
         self.persistence = PersistenceLayer(storage_dir)
         self.analyzer = ToneAnalyzer()
-        self.modulator = MoodModulator()
         
         # 1. Initialize Soul and Core
         if soul_config:
             self.soul = soul_config
             self._calibrate_from_soul()
         else:
-            # Attempt to load persisted soul
             saved_soul = self.persistence.load_soul()
             if saved_soul:
                 self.soul = saved_soul
                 self._calibrate_from_soul()
             else:
-                self.soul = {"resting_mood": "neutral", "core_values": "neutral"}
-                self.core = AffectiveCore(baseline=VADVector(0.0, 0.0, 0.0))
+                self.soul = {"resting_mood": "neutral", "core_values": "neutral", "traits": {}}
+                self._calibrate_from_soul()
         
         self.appraisal = AppraisalEngine(self.soul)
+        self.expression_filter = ExpressionFilter(self.soul)
+        self.modulator = MoodModulator()
         
         # Load last known emotional state
         saved_state = self.persistence.load_state()
@@ -38,32 +38,36 @@ class AffectiveBrain:
             self.core.last_update_time = saved_state.get("timestamp", time.time())
 
     def _calibrate_from_soul(self):
-        # Simple mapping for demo; in full version use SoulMapper
-        # Here we'll just use a default for simplicity in the core class
-        self.core = AffectiveCore(baseline=VADVector(0.0, 0.0, 0.0))
+        from .soul_mapper import SoulMapper
+        params = SoulMapper.map_soul_to_core_params(self.soul)
+        self.core = AffectiveCore(
+            baseline=params['baseline'],
+            sensitivity=params['sensitivity'],
+            decay_rates=params['decay_rates']
+        )
 
-    def process_input(self, text: str) -> dict:
-        # 1. Perception: Detect objective tone
-        objective_stimulus = self.analyzer.analyze(text)
+    def get_psych_report(self) -> Dict[str, Any]:
+        \"\"\"
+        Returns a comprehensive psychological snapshot of the agent's internal state.
+        This is the 'glass box' view of the soul.
+        \"\"\"
+        raw_state = self.core.get_state()
+        filtered_state = self.expression_filter.filter_state(raw_state)
         
-        # 2. Appraisal: Filter tone through the agent's soul/values
-        appraised_stimulus = self.appraisal.appraise(objective_stimulus)
-        
-        # 3. Integration: Update the emotional state
-        self.core.update_state(appraised_stimulus)
-        
-        # 4. Expression: Map state to voice constraints
-        state = self.core.get_state()
-        constraints = self.modulator.get_constraints(state)
-        
-        # 5. Persistence
-        self.persistence.save_state({**state, "timestamp": time.time()})
+        # Calculate the 'Honesty Gap' (difference between raw and filtered)
+        honesty_gap = {
+            dim: abs(raw_state[dim] - filtered_state[dim]) 
+            for dim in raw_state
+        }
         
         return {
-            "state": state,
-            "constraints": constraints,
-            "objective": objective_stimulus.to_dict(),
-            "appraised": appraised_stimulus.to_dict()
+            "internal_state": raw_state,
+            "expressed_state": filtered_state,
+            "honesty_gap": honesty_gap,
+            "drives": {name: drive.value for name, drive in self.core.drives.items()},
+            "masking_factor": self.expression_filter.masking_factor,
+            "active_triggers": list(self.core.triggers.keys()),
+            "status": "Stable" if max(honesty_gap.values()) < 0.3 else "Masking Heavy Emotion"
         }
 
 if __name__ == "__main__":
